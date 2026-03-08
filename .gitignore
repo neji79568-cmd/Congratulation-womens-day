@@ -1,0 +1,3 @@
+.site-server.err.log
+.site-server.out.log
+.site-server.pid

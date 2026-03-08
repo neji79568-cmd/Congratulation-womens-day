@@ -1,0 +1,402 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>&#1057; 8 &#1052;&#1072;&#1088;&#1090;&#1072;</title>
+    <style>
+        :root {
+            --bg: #8f001d;
+            --bg-dark: #5d0012;
+            --heart-main: #d4002f;
+            --heart-deep: #9f0021;
+            --heart-light: #ff5a74;
+            --text: #ffd4d9;
+            --halo: rgba(255, 70, 103, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            font-family: "Segoe Script", "Gabriola", "Palatino Linotype", cursive;
+            background: radial-gradient(circle at 50% 45%, #ab0025 0%, var(--bg) 45%, var(--bg-dark) 100%);
+            color: var(--text);
+        }
+
+        .stage {
+            --flashOpacity: 0;
+            --flashScale: 0.86;
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: grid;
+            place-items: center;
+            isolation: isolate;
+        }
+
+        .stage::after {
+            content: "";
+            position: absolute;
+            inset: -12vmax;
+            pointer-events: none;
+            z-index: 2;
+            opacity: var(--flashOpacity);
+            transform: scale(var(--flashScale));
+            background: radial-gradient(circle at center, rgba(255, 122, 142, 0.3) 0%, rgba(255, 122, 142, 0) 58%);
+            transition: opacity 130ms linear, transform 240ms ease-out;
+        }
+
+        #heartFireworks {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .pulse-rings {
+            position: absolute;
+            width: min(78vmin, 560px);
+            aspect-ratio: 1 / 1;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 122, 142, 0.3);
+            animation: ringPulse 1.22s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .pulse-rings::after {
+            content: "";
+            position: absolute;
+            inset: 11%;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 122, 142, 0.22);
+            animation: ringPulse 1.22s cubic-bezier(0.25, 0.1, 0.25, 1) infinite 0.34s;
+        }
+
+        @keyframes ringPulse {
+            0% {
+                transform: scale(0.85);
+                opacity: 0.95;
+            }
+            100% {
+                transform: scale(1.35);
+                opacity: 0;
+            }
+        }
+
+        .heart-wrap {
+            position: relative;
+            width: min(42vmin, 320px);
+            aspect-ratio: 1 / 1;
+            display: grid;
+            place-items: center;
+            animation: heartbeat 1.22s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+            filter: drop-shadow(0 0 34px var(--halo));
+            z-index: 3;
+        }
+
+        .heart-wrap::before {
+            content: "";
+            position: absolute;
+            width: 78%;
+            aspect-ratio: 1 / 1;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 97, 122, 0.42) 0%, rgba(255, 97, 122, 0) 72%);
+            animation: glowPulse 1.22s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes heartbeat {
+            0%, 24%, 55%, 100% {
+                transform: scale(1);
+            }
+            8% {
+                transform: scale(1.15);
+            }
+            36% {
+                transform: scale(1.08);
+            }
+            46% {
+                transform: scale(1.14);
+            }
+        }
+
+        @keyframes glowPulse {
+            0%, 100% {
+                transform: scale(0.96);
+                opacity: 0.7;
+            }
+            50% {
+                transform: scale(1.16);
+                opacity: 1;
+            }
+        }
+
+        .heart-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .greeting {
+            position: absolute;
+            bottom: clamp(26px, 5vh, 56px);
+            width: 100%;
+            text-align: center;
+            letter-spacing: 0.08em;
+            font-size: clamp(2.3rem, 7.2vw, 5rem);
+            color: var(--text);
+            text-shadow:
+                0 0 12px rgba(255, 122, 142, 0.55),
+                0 0 26px rgba(255, 73, 100, 0.4);
+            z-index: 4;
+            user-select: none;
+        }
+
+        .subline {
+            position: absolute;
+            bottom: clamp(12px, 2.3vh, 24px);
+            width: 100%;
+            text-align: center;
+            font-family: "Times New Roman", serif;
+            text-transform: uppercase;
+            letter-spacing: 0.22em;
+            font-size: clamp(0.58rem, 1.65vw, 0.92rem);
+            color: rgba(255, 191, 200, 0.88);
+            z-index: 4;
+            user-select: none;
+        }
+
+        @media (max-width: 700px) {
+            .heart-wrap {
+                width: min(62vmin, 280px);
+            }
+
+            .pulse-rings {
+                width: min(95vmin, 460px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="stage">
+        <canvas id="heartFireworks" aria-hidden="true"></canvas>
+        <div class="pulse-rings" aria-hidden="true"></div>
+
+        <div class="heart-wrap" id="mainHeart">
+            <svg class="heart-svg" viewBox="0 0 120 110" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <defs>
+                    <linearGradient id="heartFill" x1="15%" y1="0%" x2="85%" y2="100%">
+                        <stop offset="0%" stop-color="#ff657f"></stop>
+                        <stop offset="45%" stop-color="#d4002f"></stop>
+                        <stop offset="100%" stop-color="#92001e"></stop>
+                    </linearGradient>
+                    <linearGradient id="heartShine" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="rgba(255, 184, 193, 0.66)"></stop>
+                        <stop offset="55%" stop-color="rgba(255, 184, 193, 0.18)"></stop>
+                        <stop offset="100%" stop-color="rgba(255, 184, 193, 0)"></stop>
+                    </linearGradient>
+                </defs>
+
+                <path
+                    d="M60 104 C12 76 2 51 2 30 C2 12 17 2 34 2 C47 2 56 9 60 21 C64 9 73 2 86 2 C103 2 118 12 118 30 C118 51 108 76 60 104 Z"
+                    fill="url(#heartFill)">
+                </path>
+                <path
+                    d="M60 93 C24 71 14 52 14 35 C14 22 24 14 36 14 C46 14 54 20 60 30 C66 20 74 14 84 14 C96 14 106 22 106 35 C106 52 96 71 60 93 Z"
+                    fill="url(#heartShine)">
+                </path>
+                <ellipse cx="40" cy="26" rx="13" ry="8" fill="rgba(255, 182, 194, 0.42)" transform="rotate(-20 40 26)"></ellipse>
+            </svg>
+        </div>
+
+        <div class="greeting">С 8 Мартом!</div>
+        <div class="subline"> Пусть исполнится то что вы желете всем сердцем </div>
+    </main>
+
+    <script>
+        (() => {
+            const HEARTBEAT_MS = 1220;
+            const BEAT_PATTERN = [
+                { phase: 0.08, power: 1.25 },
+                { phase: 0.36, power: 0.86 },
+                { phase: 0.46, power: 1.05 }
+            ];
+            const canvas = document.getElementById("heartFireworks");
+            const ctx = canvas.getContext("2d");
+            const stage = document.querySelector(".stage");
+            const heart = document.getElementById("mainHeart");
+            const bursts = [];
+            const shades = ["#ff6b86", "#ff4f70", "#f9395d", "#e11743", "#ba002b"];
+            let flashTimer = null;
+            let prevBeatPhase = 0;
+            const rhythmStart = performance.now();
+
+            function resizeCanvas() {
+                const dpr = window.devicePixelRatio || 1;
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+
+                canvas.width = Math.floor(width * dpr);
+                canvas.height = Math.floor(height * dpr);
+                canvas.style.width = width + "px";
+                canvas.style.height = height + "px";
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            }
+
+            function drawHeart(x, y, size, alpha, rotation, color) {
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(rotation);
+                ctx.scale(size, size);
+                ctx.globalAlpha = alpha;
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.moveTo(0, 1.6);
+                ctx.bezierCurveTo(-2.1, -0.8, -4.2, -3.3, -1.8, -5.1);
+                ctx.bezierCurveTo(-0.6, -6.0, 0.1, -5.2, 0, -4.3);
+                ctx.bezierCurveTo(-0.1, -5.2, 0.6, -6.0, 1.8, -5.1);
+                ctx.bezierCurveTo(4.2, -3.3, 2.1, -0.8, 0, 1.6);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+            }
+
+            function createBurst(options = {}) {
+                const intensity = options.intensity || 1;
+                const rect = heart.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+                const orbit = Math.min(window.innerWidth, window.innerHeight) * 0.27;
+                const angle = typeof options.angle === "number" ? options.angle : Math.random() * Math.PI * 2;
+                const ringFactor = options.ringFactor || (0.65 + Math.random() * 0.28);
+                const baseX = cx + Math.cos(angle) * (orbit * ringFactor);
+                const baseY = cy + Math.sin(angle) * (orbit * ringFactor);
+                const particles = [];
+                const count = Math.max(12, Math.floor((16 + Math.random() * 10) * intensity));
+
+                for (let i = 0; i < count; i++) {
+                    const pAngle = (Math.PI * 2 * i) / count + (Math.random() * 0.18 - 0.09);
+                    const speed = (0.8 + Math.random() * 2.4) * (0.75 + intensity * 0.36);
+                    const lifetime = 40 + Math.floor(Math.random() * 22);
+
+                    particles.push({
+                        x: baseX,
+                        y: baseY,
+                        vx: Math.cos(pAngle) * speed,
+                        vy: Math.sin(pAngle) * speed,
+                        size: (1.5 + Math.random() * 2.2) * (0.8 + intensity * 0.28),
+                        rotation: Math.random() * Math.PI * 2,
+                        spin: (Math.random() - 0.5) * 0.18,
+                        life: lifetime,
+                        maxLife: lifetime,
+                        color: shades[Math.floor(Math.random() * shades.length)]
+                    });
+                }
+
+                bursts.push(particles);
+            }
+
+            function pulseStage(power) {
+                stage.style.setProperty("--flashOpacity", String(Math.min(0.92, 0.38 + power * 0.32)));
+                stage.style.setProperty("--flashScale", String(1 + power * 0.07));
+                clearTimeout(flashTimer);
+                flashTimer = setTimeout(() => {
+                    stage.style.setProperty("--flashOpacity", "0");
+                    stage.style.setProperty("--flashScale", "0.86");
+                }, 110);
+            }
+
+            function triggerBeat(power) {
+                const baseAngle = Math.random() * Math.PI * 2;
+                createBurst({ intensity: power, angle: baseAngle, ringFactor: 0.65 + Math.random() * 0.2 });
+                createBurst({
+                    intensity: power * 0.78,
+                    angle: baseAngle + Math.PI + (Math.random() - 0.5) * 0.25,
+                    ringFactor: 0.62 + Math.random() * 0.24
+                });
+
+                if (power > 1.1) {
+                    createBurst({
+                        intensity: power * 0.66,
+                        angle: baseAngle + Math.PI / 2 + (Math.random() - 0.5) * 0.2,
+                        ringFactor: 0.58 + Math.random() * 0.18
+                    });
+                }
+
+                pulseStage(power);
+            }
+
+            function phaseCrossed(prev, current, target) {
+                if (prev <= current) {
+                    return target > prev && target <= current;
+                }
+                return target > prev || target <= current;
+            }
+
+            function runBeatSync(now) {
+                const beatPhase = ((now - rhythmStart) % HEARTBEAT_MS) / HEARTBEAT_MS;
+
+                for (let i = 0; i < BEAT_PATTERN.length; i++) {
+                    const beat = BEAT_PATTERN[i];
+                    if (phaseCrossed(prevBeatPhase, beatPhase, beat.phase)) {
+                        triggerBeat(beat.power);
+                    }
+                }
+
+                prevBeatPhase = beatPhase;
+                requestAnimationFrame(runBeatSync);
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                for (let b = bursts.length - 1; b >= 0; b--) {
+                    const burst = bursts[b];
+
+                    for (let i = burst.length - 1; i >= 0; i--) {
+                        const p = burst[i];
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.vx *= 0.986;
+                        p.vy *= 0.986;
+                        p.vy += 0.014;
+                        p.rotation += p.spin;
+                        p.life -= 1;
+
+                        const alpha = p.life / p.maxLife;
+                        drawHeart(p.x, p.y, p.size, alpha, p.rotation, p.color);
+
+                        if (p.life <= 0) {
+                            burst.splice(i, 1);
+                        }
+                    }
+
+                    if (burst.length === 0) {
+                        bursts.splice(b, 1);
+                    }
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            resizeCanvas();
+            animate();
+            runBeatSync(performance.now());
+            triggerBeat(1.18);
+
+            window.addEventListener("resize", resizeCanvas);
+            window.addEventListener("pointerdown", () => triggerBeat(1.28));
+        })();
+    </script>
+</body>
+</html>
